@@ -31,7 +31,7 @@ dim(strb) # 10215 21
 ## NA data, columns with only one value
 ```{r}
 
-colSums(is.na(strab)) 
+colSums(is.na(strb)) 
 
 
 
