@@ -125,7 +125,12 @@ df %<>% filter(!Value == " (D)" & !Value == " (Z)")
 
 df %<>% filter(discription == "MEASURED IN LB / ACRE / APPLICATION")
 
+```
+
+```{r}
+
 df <- drop_no_info_cols(df)
+
 df$Value <- as.numeric(df$Value)
 df$Year <- as.factor(df$Year)
 df$chemical.type <- as.factor(df$chemical.type)
