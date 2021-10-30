@@ -18,11 +18,6 @@ library(magrittr)
 
 strb <- read.csv("strawberry_test.csv")
 
-
-#
-View(pest)
-View(strb)
-
 dim(strb) # 10215 21
 
 ```
@@ -33,10 +28,8 @@ dim(strb) # 10215 21
 
 colSums(is.na(strb)) 
 
-
-
 drop_no_info_cols <- function(df){
-  cnames <- colnames(strb)
+  cnames <- colnames(df)
   T = NULL
   for(i in 1:ncol(df)){T <- c(T, nrow(unique(df[i])))} # unique values of each column
   drop_cols <- cnames[which(T == 1)]
@@ -53,18 +46,17 @@ colnames(strb)
 ## type of chemicals
 ```{r}
 # View(strb)
+strb %<>% separate(col = Data.Item, 
+                   into = c("Strawberries", "items", "discription", "units"), 
+                   sep = ",", 
+                   fill = "right")
 
+# unique(strb$Strawberries)
+# unique(strb$items)
+# unique(strb$discription)
+# unique(strb$units) 
 
-strb %<>% separate(col = Data.Item, into = c("Strawberries", "items", "discription", "units"), sep = ",", fill = "right")
-
-unique(strb$Strawberries)
-unique(strb$items)
-unique(strb$discription)
-unique(strb$units) 
-
-distinct(strab, Domain)
-
-
+distinct(strb, Domain)
 
 # copy column of Domain.Category
 strb %<>% 
@@ -86,24 +78,18 @@ strb %<>% separate(col = chemical,
                     into = c("chemical", "che_num"), 
                     sep = "=", 
                     fill = "right")
-
-
 ```
-
-
-
 
 
 ## pest
 ```{r}
 
 pest <- read.csv("pesticides.csv")
-dim(pest)
-View(pest)
-colnames(pest)
+# dim(pest)
 names(pest)[1] <- "Pesticide"
 
 pest <- pest[!apply(pest == "",1, all), ] # delete empty rows
+
 
 # include empty relationship
 l_pest <- pest %>% gather(Toxicity, Level, Carcinogen:Bee.Toxins, -Pesticide)
@@ -113,12 +99,12 @@ l_pest <- mutate(l_pest, humanORbee = ifelse(Toxicity == "Bee.Toxins", "Bee", "H
 
 # without empty relationship
 rela_pest <- l_pest[!(l_pest$Level == ""), ]
-View(rela_pest)
 
 # turn name into capital letters
 rela_pest$Pesticide <- toupper(rela_pest$Pesticide)
 
 names(rela_pest)[1] <- "chemical"
+
 
 
 ```
@@ -129,9 +115,9 @@ names(rela_pest)[1] <- "chemical"
 
 strb$chemical <- str_trim(strb$chemical)
 strb$discription <- str_trim(strb$discription)
-
+# count(strb, chemical.type)
 df <- merge(x= strb, y = rela_pest, by = "chemical")
-View(df)
+# count(df, chemical.type)
 
 df %<>% select(chemical, chemical.type, humanORbee, Level, State, Year, discription, Value, Year)
 
@@ -139,4 +125,44 @@ df %<>% filter(!Value == " (D)" & !Value == " (Z)")
 
 df %<>% filter(discription == "MEASURED IN LB / ACRE / APPLICATION")
 
+df <- drop_no_info_cols(df)
+df$Value <- as.numeric(df$Value)
+df$Year <- as.factor(df$Year)
+df$chemical.type <- as.factor(df$chemical.type)
+# df %>% count(chemical)
+# 
+# df %>% count(chemical.type)
+
+df %>%count(State)
+summary(df$Value)
+# set flag:
+# 1: 0.0010 ~ 0.1420
+# 2: 0.1420 ~ 0.8004
+# 3: 0.8004 ~ 1.0900 
+# 4: 1.0900 ~ 3.0900 
+df$Value_q <- as.factor(ifelse((df$Value <= .1420), "0.0010 ~ 0.1420", 
+                     ifelse((df$Value > .1420 & df$Value <= .8004), "0.1420 ~ 0.8004", 
+                            ifelse((df$Value > .8004 & df$Value <= 1.0900), "0.8004 ~ 1.0900", "1.0900 ~ 3.0900" ))))
+
+mu <- df %>% group_by(chemical.type) %>% summarise(mean = mean(Value))
+
+ggplot(df) + geom_bar(aes(x = Year, fill = Value_q), alpha = .8, position = "fill") + facet_grid(~ chemical.type)  
+
+ggplot(df) + geom_bar(aes(x = State, fill = Value_q), alpha = .8, position = "fill") + facet_grid(~ chemical.type) + theme(legend.position  = "bottom")
+
+ggplot() + geom_density(data = df, aes(x = Value, fill = chemical.type, color = chemical.type), alpha = .5) + geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8)
+
+ggplot(df, aes( x = chemical.type, y = Value, fill = chemical.type)) + geom_violin(alpha = .5) + geom_boxplot(width=0.1) + stat_summary(fun=mean, geom="point", shape=1, size=2) + theme(legend.position  = "none")
+
+
+
 ```
+
+
+
+
+
+
+
+
+
