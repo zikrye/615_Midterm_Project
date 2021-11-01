@@ -151,9 +151,12 @@ df$Value_q <- as.factor(ifelse((df$Value <= .1420), "0.0010 ~ 0.1420",
 
 mu <- df %>% group_by(chemical.type) %>% summarise(mean = mean(Value))
 
-ggplot(df) + geom_bar(aes(x = Year, fill = Value_q), alpha = .8, position = "fill") + facet_grid(~ chemical.type)  
+#added two functions to the following 2 ggplot functions
+#scale_x_discrete to only display every 4 years
+#theme(axis.text.x to make it diagonal)
+ggplot(df) + geom_bar(aes(x = Year, fill = Value_q), alpha = .8, position = "fill") + facet_grid(~ chemical.type) +  scale_x_discrete(breaks=seq(1990, 2019, 4)) + theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))
 
-ggplot(df) + geom_bar(aes(x = State, fill = Value_q), alpha = .8, position = "fill") + facet_grid(~ chemical.type) + theme(legend.position  = "bottom")
+ggplot(df) + geom_bar(aes(x = State, fill = Value_q), alpha = .8, position = "fill") + facet_grid(~ chemical.type) + theme(legend.position  = "bottom") + theme(axis.text.x = element_text(angle = 45, hjust=1))
 
 ggplot() + geom_density(data = df, aes(x = Value, fill = chemical.type, color = chemical.type), alpha = .5) + geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8)
 
