@@ -162,8 +162,12 @@ ggplot() + geom_density(data = df, aes(x = Value, fill = chemical.type, color = 
 
 ggplot(df, aes( x = chemical.type, y = Value, fill = chemical.type)) + geom_violin(alpha = .5) + geom_boxplot(width=0.1) + stat_summary(fun=mean, geom="point", shape=1, size=2) + theme(legend.position  = "none")
 
+#interactive plot 
+gg_point <- ggplot(df) + geom_point_interactive(aes(x = Year, y = Value, color = State, tooltip = chemical, data_id = chemical)) 
 
+plot <- girafe(ggobj = gg_point)
 
+plot
 ```
 
 
