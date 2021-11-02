@@ -155,6 +155,9 @@ df$Value_q <- as.factor(ifelse((df$Value <= .1420), "0.0010 ~ 0.1420",
 
 mu <- df %>% group_by(chemical.type) %>% summarise(mean = mean(Value))
 
+#Extract the observation in California
+df_Cal <- filter(df, State == "CALIFORNIA")
+
 #added two functions to the following 2 ggplot functions
 #scale_x_discrete to only display every 4 years
 #theme(axis.text.x to make it diagonal)
@@ -196,7 +199,7 @@ ggplot(df) +
 ggplot(df_Cal) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
   geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8) + 
   facet_wrap(~Toxicity)+
-  coord_cartesian(ylim = c(0, 60))+
+  coord_cartesian(xlim = c(0, 3), ylim = c(0, 60))+
   labs(title = "Chemical use by toxicity category in California")
 
 ```
