@@ -20,13 +20,14 @@ library(maps)
 MainStates <- map_data("state")
 MainStates$region <- toupper(MainStates$region)
 colnames(MainStates) <- c("long", "lat", "group", "order", "State", "subregion")
+df_2000 <- subset(df, Year == 2000) 
 
-df_2000 <- inner_join(MainStates, df_2000, by = "State")
+df_2000 <- inner_join(MainStates, df_2000, by = "State") 
 
 p0 <- ggplot() + 
   geom_polygon(data=MainStates, aes(x=long, y=lat, group=group),color="black", fill="seashell1", size = .3) + 
   geom_polygon(data = df_2000, 
-               aes(x = long, y = lat, group = group, fill = mean_value), 
+               aes(x = long, y = lat, group = group, fill = Value), 
                color = "grey", size = .3) + 
   scale_fill_continuous(name="strawberry value", 
             low = "chartreuse", high = "chartreuse4", na.value = "grey50") +
