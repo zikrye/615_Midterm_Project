@@ -123,7 +123,7 @@ strb$discription <- str_trim(strb$discription)
 df <- merge(x= strb, y = rela_pest, by = "chemical")
 # count(df, chemical.type)
 
-df %<>% select(chemical, chemical.type, humanORbee, Level, State, Year, discription, Value, Year)
+df %<>% select(chemical, chemical.type, humanORbee, Level, State, Year, discription, Value, Year,  Toxicity)
 
 df %<>% filter(!Value == " (D)" & !Value == " (Z)")
 
