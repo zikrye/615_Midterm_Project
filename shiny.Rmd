@@ -3,6 +3,7 @@ title: "shiny"
 author: "Franky Zhang"
 date: "11/2/2021"
 output: html_document
+runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
