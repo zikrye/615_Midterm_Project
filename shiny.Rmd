@@ -1,0 +1,74 @@
+---
+title: "shiny"
+author: "Franky Zhang"
+date: "11/2/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyverse)
+library(magrittr)
+library(shiny)
+library(maps)
+```
+
+```{r}
+ui_1 <- fluidPage(
+  selectInput("chemical.type", "select the chemical type", c("CHEMICAL, INSECTICIDE", "CHEMICAL, FUNGICIDE")),
+  selectInput("State", "select state", unique(df$State)),
+  plotOutput("plot", brush = "plot_brush"),
+  tableOutput("data")
+)
+server_1 <- function(input, output, session) {
+  output$plot <- renderPlot({
+    ggplot(data = subset(df, chemical.type == input$chemical.type & State == input$State),
+           mapping = aes(x = Year, y = Value, color = chemical)) + 
+      geom_point()
+    }, res = 96)
+  
+  output$data <- renderTable({
+    brushedPoints(subset(df, chemical.type == input$chemical.type & State == input$State), input$plot_brush)
+  })
+}
+
+shinyApp(ui_1, server_1)
+
+```
+
+
+
+```{r}
+year <- df %>% distinct(Year)
+year <- year$Year
+MainStates <- map_data("state")
+MainStates$region <- toupper(MainStates$region)
+colnames(MainStates) <- c("long", "lat", "group", "order", "State", "subregion")
+MainStates$State <- toupper(MainStates$State)
+# df_mean <- df %>% group_by(State) %>% summarise(mean_value = mean(Value))
+# plot_data <- inner_join(df_mean, MainStates, by = "State")
+
+ui_2 <- fluidPage(
+  selectInput("Year", "select year", year), 
+  plotOutput("plot")
+)
+server_2 <- function(input, output, session) {
+    output$plot <- renderPlot({
+    df_mean <- df %>% subset(Year == input$Year) %>% group_by(State) %>% summarise(mean_value = mean(Value))
+    plot_data <- inner_join(df_mean, MainStates, by = "State") %>% 
+      select(c("State", "long", "lat", "mean_value", "group"))
+    ggplot() + 
+    geom_polygon(data=MainStates, aes(x=long, y=lat, group=group),color="black", fill="seashell1", size = .3) + 
+    geom_polygon(data = plot_data, aes(x = long, y = lat, group = group, fill = mean_value), 
+               color = "grey", size = .3) + 
+    scale_fill_continuous(name="strawberry value", 
+            low = "blue2", 
+            high = "brown3", 
+            na.value = "grey50") + labs(title="Strawberry values(MEASURED IN LB / ACRE / APPLICATION)")
+    }, res = 96, height = 550, width = 950)
+}
+
+shinyApp(ui_2, server_2)
+  
+```
