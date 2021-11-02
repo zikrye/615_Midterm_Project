@@ -154,7 +154,7 @@ df$Value_q <- as.factor(ifelse((df$Value <= .1420), "0.0010 ~ 0.1420",
                             ifelse((df$Value > .8004 & df$Value <= 1.0900), "0.8004 ~ 1.0900", "1.0900 ~ 3.0900" ))))
 
 mu <- df %>% group_by(chemical.type) %>% summarise(mean = mean(Value))
-
+mubee <- df %>% filter(humanORbee=="Bee") %>% summarise(mean = mean(Value)) 
 #Extract the observation in California
 df_Cal <- filter(df, State == "CALIFORNIA")
 
@@ -179,28 +179,25 @@ plot
 ##############################################################
 #Add plots by toxicity category, by state, and in California
 ##############################################################
-ggplot(df) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
-  geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8) + 
-  facet_wrap(~Toxicity) +
-  coord_cartesian(ylim = c(0, 60))+
-  labs(title = "Chemical use by toxicity category")
+ggplot(filter(df, humanORbee=="Bee")) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
+  geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
+  coord_cartesian(ylim = c(0, 30))+
+  labs(title = "Bee Toxic Chemical use")
 
 
-ggplot(df) + 
+ggplot(filter(df, humanORbee=="Bee")) + 
   geom_freqpoly(aes(x = Value, color = State), alpha= 100) + 
-  geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8) + 
-  facet_wrap(~humanORbee) +
+  geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
   scale_color_manual(values = c("CALIFORNIA"="red"))+
-  coord_cartesian(ylim = c(0, 60))+
-  labs(title = "Chemical use in California compared to all the state")
+  coord_cartesian(ylim = c(0, 30))+
+  labs(title = "Bee Toxic Chemical use in California compared to other states")
 
 
 #Plot for only CALIFORNIA
-ggplot(df_Cal) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
-  geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8) + 
-  facet_wrap(~Toxicity)+
-  coord_cartesian(xlim = c(0, 3), ylim = c(0, 60))+
-  labs(title = "Chemical use by toxicity category in California")
+ggplot(filter(df_Cal, humanORbee=="Bee")) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
+  geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
+  coord_cartesian( ylim = c(0, 30))+
+  labs(title = "Bee Toxic Chemical use by Toxicity level in California")
 
 ```
 
