@@ -7,9 +7,13 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+Sys.setenv("LANGUAGE" = "EN")
+Sys.setlocale("LC_ALL", "C")
 library(dplyr)
 library(tidyverse)
 library(magrittr)
+library(ggplot2)
+library(ggiraph)
 ```
 
 
@@ -168,6 +172,33 @@ gg_point <- ggplot(df) + geom_point_interactive(aes(x = Year, y = Value, color =
 plot <- girafe(ggobj = gg_point)
 
 plot
+
+##############################################################
+#Add plots by toxicity category, by state, and in California
+##############################################################
+ggplot(df) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
+  geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8) + 
+  facet_wrap(~Toxicity) +
+  coord_cartesian(ylim = c(0, 60))+
+  labs(title = "Chemical use by toxicity category")
+
+
+ggplot(df) + 
+  geom_freqpoly(aes(x = Value, color = State), alpha= 100) + 
+  geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8) + 
+  facet_wrap(~humanORbee) +
+  scale_color_manual(values = c("CALIFORNIA"="red"))+
+  coord_cartesian(ylim = c(0, 60))+
+  labs(title = "Chemical use in California compared to all the state")
+
+
+#Plot for only CALIFORNIA
+ggplot(df_Cal) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
+  geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8) + 
+  facet_wrap(~Toxicity)+
+  coord_cartesian(ylim = c(0, 60))+
+  labs(title = "Chemical use by toxicity category in California")
+
 ```
 
 
