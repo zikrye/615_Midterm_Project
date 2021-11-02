@@ -205,6 +205,34 @@ ggplot(df_Cal) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) +
 ```
 
 
+## interactive plot of mean value
+```{r}
+
+
+library(ggplot2)
+library(dplyr)
+library(plotly)
+
+
+fungi <- df  %>% group_by(State, chemical.type, Year)%>% summarise(Value = mean(Value)) %>% filter(chemical.type == "CHEMICAL, FUNGICIDE")
+
+p_f <- ggplot(fungi, aes(x = Year, y = Value, group = State))+
+  geom_point(aes(color = State))+
+  geom_line(aes(color = State))
+ggplotly(p_f)
+
+
+insec <- df  %>% group_by(State, chemical.type, Year)%>% summarise(Value = mean(Value)) %>% filter(chemical.type == "CHEMICAL, INSECTICIDE")
+
+p_i <- ggplot(insec, aes(x = Year, y = Value, group = State))+
+  geom_point(aes(color = State))+
+  geom_line(aes(color = State))
+ggplotly(p_i)
+
+
+```
+
+
 
 
 
