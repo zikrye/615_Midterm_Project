@@ -1,0 +1,80 @@
+---
+title: "shiny_test"
+author: "Franky Zhang"
+date: "11/1/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyverse)
+library(magrittr)
+library(shiny)
+```
+
+
+
+```{r}
+library(maps)
+MainStates <- map_data("state")
+MainStates$region <- toupper(MainStates$region)
+colnames(MainStates) <- c("long", "lat", "group", "order", "State", "subregion")
+
+df_2000 <- inner_join(MainStates, df_2000, by = "State")
+
+p0 <- ggplot() + 
+  geom_polygon(data=MainStates, aes(x=long, y=lat, group=group),color="black", fill="seashell1", size = .3) + 
+  geom_polygon(data = df_2000, 
+               aes(x = long, y = lat, group = group, fill = mean_value), 
+               color = "grey", size = .3) + 
+  scale_fill_continuous(name="strawberry value", 
+            low = "chartreuse", high = "chartreuse4", na.value = "grey50") +
+          labs(title="State Population in the Mainland United States")
+```
+
+
+```{r}
+ui <- fluidPage(
+  selectInput("chemical.type", "select the chemical type", c("CHEMICAL, INSECTICIDE", "CHEMICAL, FUNGICIDE")),
+  selectInput("State", "select state", unique(df$State)),
+  plotOutput("plot", brush = "plot_brush"),
+  tableOutput("data")
+)
+server <- function(input, output, session) {
+  output$plot <- renderPlot({
+    ggplot(data = subset(df, chemical.type == input$chemical.type & State == input$State),
+           mapping = aes(x = Year, y = Value, color = chemical)) + 
+      geom_point()
+    }, res = 96)
+  
+  output$data <- renderTable({
+    brushedPoints(subset(df, chemical.type == input$chemical.type & State == input$State), input$plot_brush)
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+
+
+```{r}
+subset(df, chemical.type == input$chemical.type & Year == input$year)
+
+    ggplot() + 
+      geom_point(data = subset(df, chemical.type == "CHEMICAL, INSECTICIDE"), mapping = aes(Year, Value, color = chemical)) 
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
