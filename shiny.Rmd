@@ -15,6 +15,7 @@ library(maps)
 ```
 
 ```{r}
+# point plot
 ui_1 <- fluidPage(
   selectInput("chemical.type", "select the chemical type", c("CHEMICAL, INSECTICIDE", "CHEMICAL, FUNGICIDE")),
   selectInput("State", "select state", unique(df$State)),
@@ -40,12 +41,14 @@ shinyApp(ui_1, server_1)
 
 
 ```{r}
+# map
 year <- df %>% distinct(Year)
 year <- year$Year
 MainStates <- map_data("state")
 MainStates$region <- toupper(MainStates$region)
 colnames(MainStates) <- c("long", "lat", "group", "order", "State", "subregion")
 MainStates$State <- toupper(MainStates$State)
+
 # df_mean <- df %>% group_by(State) %>% summarise(mean_value = mean(Value))
 # plot_data <- inner_join(df_mean, MainStates, by = "State")
 
