@@ -35,22 +35,19 @@ For the pesticide data, we adopted the provided data.
 Finally, we combined these two data sets, deleted rows with no information, and selected the variables needed for EDA.
 
 ### ii) Exploratory Data Analysis
-#### - EDA by chemical type <br>
+#### - EDA by chemical type 
+<br>
 First we analyzed the data set making bar chart, violin and box plot, and density graph by chemical type to see if there is any difference in the amount of strawberry production between the two chemical types.
 
-#### - EDA by year and state  <br>
+#### - EDA by year and state 
+<br>
 We also analyzed the data in terms of the amount of strawberry production by year and state where we make use of shiny application which allows us to explore strawberry production trends in each state and year more easily. 
 
-#### - EDA by toxicity level  <br>
+#### - EDA by toxicity level  
+<br>
 Finally we analyzed the data in terms of the amount of strawberry production by toxicity level.
 
 ## 3. Results
-
-## 4. Conclusion
-- Strawberry produced by acre by application has decreased over time. 
-- California used to be the top producer
-- Florida is overtaking California
-- High toxic chemical for bee seemed to be correlated with larger strawberry production. 
 
 ```{r}
 #added two functions to the following 2 ggplot functions
@@ -132,3 +129,9 @@ ggplotly(p_i)
 
 
 
+
+## 4. Conclusion
+- Strawberry produced by acre by application has decreased over time. 
+- California used to be the top producer
+- Florida is overtaking California
+- High toxic chemical for bee seemed to be correlated with larger strawberry production. 
