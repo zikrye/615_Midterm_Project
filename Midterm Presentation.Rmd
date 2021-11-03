@@ -153,7 +153,7 @@ shinyApp(ui_2, server_2)
 ## Conclusion  
   
  * Strawberry produced by acre by application has decreased over time.  
- * California is the top producer of the years.  
+ * California has the highest values of the years.  
   
 Should explore:  
   
