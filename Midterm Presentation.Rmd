@@ -26,9 +26,9 @@ How do the amount of strawberries produced differ by state?
 ```{r, include = FALSE}
 source("data_and_eda.R")
 ```
+- Data Wrangling for strawberry and pesticide file
 - Combined strawberry and pesticide csv
-- Created a function to drop rows with NA data or columns with only 1 value.   
-- Separated messy variable names into tidy, useable variables  
+- Deleted rows with no value information and filter the variables needed
 
 
 ## EDA: Plot 1
