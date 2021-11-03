@@ -1,0 +1,134 @@
+---
+title: "Midterm project"
+author: "Group 10: Kayla Choi, Kosuke Sasaki, Clare Zike Tan, Franky Yifan Zhang"
+date: "2021/11/03"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+Sys.setenv("LANGUAGE" = "EN")
+Sys.setlocale("LC_ALL", "C")
+library(dplyr)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(ggiraph)
+```
+
+
+```{r, include = FALSE}
+source("data_and_eda.R")
+```
+
+## 1. Introduction
+Our research questions about the strawberry production and chemical use in the US are:  
+i) Does the type of chemical have a correlation to the amount of strawberries produced (Measured in lb/ acre/ application)?  
+ii) Do different states use different chemicals?  
+iii) How do the amount of strawberries produced differ by state?  
+To answer these questions, we looked up two data sets, cleaned and merged them into one data set, and created graphs, tables and maps for Exploratory Data Analysis (EDA).
+
+## 2. Methods
+### i) Data set
+We used two data sets,USDA strawberry data and pesticide data. For the strawberry data set, the provided one in the class does not seem to be enough for our research in terms of information on each state production, so we looked up the data on the USDA web site again and got the data set which include in total 10215 observations of strawberry data in 10 states.  
+For the pesticide data, we adopted the provided data.   
+Finally, we combined these two data sets, deleted rows with no information, and selected the variables needed for EDA.
+
+### ii) Exploratory Data Analysis
+#### - EDA by chemical type <br>
+First we analyzed the data set making bar chart, violin and box plot, and density graph by chemical type to see if there is any difference in the amount of strawberry production between the two chemical types.
+
+#### - EDA by year and state  <br>
+We also analyzed the data in terms of the amount of strawberry production by year and state where we make use of shiny application which allows us to explore strawberry production trends in each state and year more easily. 
+
+#### - EDA by toxicity level  <br>
+Finally we analyzed the data in terms of the amount of strawberry production by toxicity level.
+
+## 3. Results
+
+## 4. Conclusion
+- Strawberry produced by acre by application has decreased over time. 
+- California used to be the top producer
+- Florida is overtaking California
+- High toxic chemical for bee seemed to be correlated with larger strawberry production. 
+
+```{r}
+#added two functions to the following 2 ggplot functions
+#scale_x_discrete to only display every 4 years
+#theme(axis.text.x to make it diagonal)
+ggplot(df) + geom_bar(aes(x = Year, fill = Value_q), alpha = .8, position = "fill") + facet_grid(~ chemical.type) +  scale_x_discrete(breaks=seq(1990, 2019, 4)) + theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))
+
+ggplot(df) + geom_bar(aes(x = State, fill = Value_q), alpha = .8, position = "fill") + facet_grid(~ chemical.type) + theme(legend.position  = "bottom") + theme(axis.text.x = element_text(angle = 45, hjust=1))
+
+ggplot() + geom_density(data = df, aes(x = Value, fill = chemical.type, color = chemical.type), alpha = .5) + geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8)
+
+ggplot(df, aes( x = chemical.type, y = Value, fill = chemical.type)) + geom_violin(alpha = .5) + geom_boxplot(width=0.1) + stat_summary(fun=mean, geom="point", shape=1, size=2) + theme(legend.position  = "none")
+
+#interactive plot 
+gg_point <- ggplot(df) + geom_point_interactive(aes(x = Year, y = Value, color = State, tooltip = chemical, data_id = chemical)) 
+
+plot <- girafe(ggobj = gg_point)
+
+plot
+
+##############################################################
+#Add plots by toxicity category, by state, and in California
+##############################################################
+ggplot(filter(df, humanORbee=="Bee")) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
+  geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
+  coord_cartesian(ylim = c(0, 30))+
+  labs(title = "Bee Toxic Chemical use")
+
+
+ggplot(filter(df, humanORbee=="Bee")) + 
+  geom_freqpoly(aes(x = Value, color = State), alpha= 100) + 
+  geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
+  scale_color_manual(values = c("CALIFORNIA"="red"))+
+  coord_cartesian(ylim = c(0, 30))+
+  labs(title = "Bee Toxic Chemical use in California compared to other states")
+
+
+#Plot for only CALIFORNIA
+ggplot(filter(df_Cal, humanORbee=="Bee")) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
+  geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
+  coord_cartesian( ylim = c(0, 30))+
+  labs(title = "Bee Toxic Chemical use by Toxicity level in California")
+
+```
+
+
+## interactive plot of mean value
+```{r}
+
+
+library(ggplot2)
+library(dplyr)
+library(plotly)
+
+
+fungi <- df  %>% group_by(State, chemical.type, Year)%>% summarise(Value = mean(Value)) %>% filter(chemical.type == "CHEMICAL, FUNGICIDE")
+
+p_f <- ggplot(fungi, aes(x = Year, y = Value, group = State))+
+  geom_point(aes(color = State))+
+  geom_line(aes(color = State))
+ggplotly(p_f)
+
+
+insec <- df  %>% group_by(State, chemical.type, Year)%>% summarise(Value = mean(Value)) %>% filter(chemical.type == "CHEMICAL, INSECTICIDE")
+
+p_i <- ggplot(insec, aes(x = Year, y = Value, group = State))+
+  geom_point(aes(color = State))+
+  geom_line(aes(color = State))
+ggplotly(p_i)
+
+
+```
+
+
+
+
+
+
+
+
+
