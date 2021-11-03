@@ -11,8 +11,10 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ## Data Introduction and Research Question
-- Data comes from USDA National Agricultural Statistics Service
-- over 10000 observations of 13 variables
+  
+  
+ * Data comes from USDA National Agricultural Statistics Service
+ * over 10000 observations of 13 variables
 
 Questions:  
 Does the type of chemical have a correlation to the amount of strawberries produced (Measured in lb / acre / application )?   
@@ -26,9 +28,13 @@ How do the amount of strawberries produced differ by state?
 ```{r, include = FALSE}
 source("data_and_eda.R")
 ```
-- Data Wrangling for strawberry and pesticide file
-- Combined strawberry and pesticide csv
-- Deleted rows with no value information and filter the variables needed
+  
+ * Data Wrangling for strawberry and pesticide file  
+  
+ * Combined strawberry and pesticide csv  
+  
+ * Deleted rows with no value information and filter the variables needed  
+
 
 
 ## EDA: Plot 1
@@ -50,18 +56,21 @@ Insecticide has higher mean and median value, but fungicide has a larger spread.
 Let's look at this information in a different way. 
 
 ## EDA: Plot 3
-```{r, fig.cap = "Density of Chemical use and corresponding strawberry production", echo = FALSE, fig.dim = c(8,3)}
+```{r, fig.cap = "Density of Chemical use and corresponding strawberry production", echo = FALSE, fig.dim = c(8,2.5)}
 density
 ```
   
 Same conclusions as before:  
-- Fungicide corresponds with lower strawberry production  
-- Insecticide has higher values  
-- Fungicide has larger spread  
+  
+ * Fungicide corresponds with lower strawberry production  
+ * Insecticide has higher values  
+ * Fungicide has larger spread  
 
 
 ## Combining Year and State questions
-Let's consider the trend of strawberry production corresponding to different chemicals by state and by year.   
+Let's consider the trend of strawberry production corresponding to different chemicals by state and by year.     
+  
+  
 We can do this with interactive plot.  
 
 ## Interactive Plot 1: Fungicide
@@ -141,15 +150,22 @@ shinyApp(ui_2, server_2)
   
 ```
 
-## Conclusion
-- Strawberry produced by acre by application has decreased over time.  
-- California used to the be the top producer
-- Florida is overtaking California
+## Conclusion  
+  
+ * Strawberry produced by acre by application has decreased over time.  
+ * California is the top producer of the years.  
+  
+Should explore:  
+  
+ * other variables' relationships to pesticide use  
+ * other variables' relationships to strawberry production  
 
 ## Extra EDA
 In our data exploration, we created many other plots:    
-- Bee toxicity vs strawberry production  
-- Bee toxic chemicals used in CA versus other states  
-- Bee toxic chemicals used in CA by toxicity level  
-- Interactive plot of chemical and strawberry production by both year and state    
+  
+ * Bee toxicity vs strawberry production  
+ * Bee toxic chemicals used in CA versus other states  
+ * Bee toxic chemicals used in CA by toxicity level  
+ * Interactive plot of chemical and strawberry production by both year and state    
+  
 Let us know if you would like to see these extra plots.    
