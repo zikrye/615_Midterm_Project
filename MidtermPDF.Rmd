@@ -1,8 +1,12 @@
 ---
 title: "Midterm project"
-author: "Group 10: Kayla Choi, Kosuke Sasaki, Clare Zike Tan, Franky Yifan Zhang"
+author: 'Group 10: Kayla Choi, Kosuke Sasaki, Clare Zike Tan, Franky Yifan Zhang'
 date: "2021/11/03"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document: default
+always_allow_html: true
+
 ---
 
 ```{r setup, include=FALSE}
