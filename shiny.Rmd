@@ -17,79 +17,8 @@ library(shiny)
 library(maps)
 ```
 
-```{r}
-
-strb <- read.csv("strawberry_test.csv")
-
-drop_no_info_cols <- function(df){
-  cnames <- colnames(df)
-  T = NULL
-  for(i in 1:ncol(df)){T <- c(T, nrow(unique(df[i])))} # unique values of each column
-  drop_cols <- cnames[which(T == 1)]
-  return(select(df, !all_of(drop_cols)))
-}
-
-strb <- drop_no_info_cols(strb)
-strb %<>% separate(col = Data.Item, 
-                   into = c("Strawberries", "items", "discription", "units"), 
-                   sep = ",", 
-                   fill = "right")
-strb %<>% 
-  mutate(Chemicals = Domain.Category) %>% 
-  relocate(Chemicals, .after = Domain.Category)
-
-strb %<>% separate(col = Chemicals,
-                     into = c("chemical.type", "chemical"),
-                     sep = ":",
-                     fill = "right")
-
-
-strb$chemical <- str_extract(str_trim(strb$chemical) ,"[^(].*[^)]")
-strb %<>% separate(col = chemical, 
-                    into = c("chemical", "che_num"), 
-                    sep = "=", 
-                    fill = "right")
-pest <- read.csv("pesticides.csv")
-names(pest)[1] <- "Pesticide"
-
-pest <- pest[!apply(pest == "",1, all), ] # delete empty rows
-# include empty relationship
-l_pest <- pest %>% gather(Toxicity, Level, Carcinogen:Bee.Toxins, -Pesticide)
-
-# clarify a new column, human or bee
-l_pest <- mutate(l_pest, humanORbee = ifelse(Toxicity == "Bee.Toxins", "Bee", "Human"))
-
-# without empty relationship
-rela_pest <- l_pest[!(l_pest$Level == ""), ]
-
-# turn name into capital letters
-rela_pest$Pesticide <- toupper(rela_pest$Pesticide)
-
-names(rela_pest)[1] <- "chemical"
-
-strb$chemical <- str_trim(strb$chemical)
-strb$discription <- str_trim(strb$discription)
-# count(strb, chemical.type)
-df <- merge(x= strb, y = rela_pest, by = "chemical")
-# count(df, chemical.type)
-
-df %<>% select(chemical, chemical.type, humanORbee, Level, State, Year, discription, Value, Year,  Toxicity)
-
-df %<>% filter(!Value == " (D)" & !Value == " (Z)")
-
-df %<>% filter(discription == "MEASURED IN LB / ACRE / APPLICATION")
-df <- drop_no_info_cols(df)
-
-df$Value <- as.numeric(df$Value)
-df$Year <- as.factor(df$Year)
-df$chemical.type <- as.factor(df$chemical.type)
-df %>%count(State)
-df$Value_q <- as.factor(ifelse((df$Value <= .1420), "0.0010 ~ 0.1420", 
-                     ifelse((df$Value > .1420 & df$Value <= .8004), "0.1420 ~ 0.8004", 
-                            ifelse((df$Value > .8004 & df$Value <= 1.0900), "0.8004 ~ 1.0900", "1.0900 ~ 3.0900" ))))
-
-mu <- df %>% group_by(chemical.type) %>% summarise(mean = mean(Value))
-
+```{r, include = FALSE}
+source("data_and_eda.R")
 ```
 
 ```{r}
