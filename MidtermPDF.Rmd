@@ -71,28 +71,31 @@ plot
 ##############################################################
 #Add plots by toxicity category, by state, and in California
 ##############################################################
-ggplot(filter(df, humanORbee=="Bee")) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
+ggplot(df) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
   geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
   coord_cartesian(ylim = c(0, 30))+
+  facet_wrap(~humanORbee) +
   labs(title = "Bee Toxic Chemical use")
 
 
-ggplot(filter(df, humanORbee=="Bee")) + 
+ggplot(df) + 
   geom_freqpoly(aes(x = Value, color = State), alpha= 100) + 
   geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
   scale_color_manual(values = c("CALIFORNIA"="red"))+
   coord_cartesian(ylim = c(0, 30))+
+  facet_wrap(~humanORbee) +
   labs(title = "Bee Toxic Chemical use in California compared to other states")
 
 
 #Plot for only CALIFORNIA
-ggplot(filter(df_Cal, humanORbee=="Bee")) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
+ggplot(df_Cal) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
   geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
   coord_cartesian( ylim = c(0, 30))+
+  facet_wrap(~humanORbee) +
   labs(title = "Bee Toxic Chemical use by Toxicity level in California")
 
 ```
-
+This graph shows the amount of strawberry production by toxicity type. For the chemical toxic for bee, it seems that we have correlation between high toxic chemical and the amount of strawberry production. For the 
 
 ## interactive plot of mean value
 ```{r}
