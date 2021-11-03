@@ -42,7 +42,7 @@ Let's visualize the difference between fungicide and insecticide.
   
 
 ## EDA: Plot 2
-```{r, fig.cap = "Distribution of Chemical use and corresponding strawberry production", echo = FALSE, fig.dim = c(8,4)}
+```{r, fig.cap = "Distribution of Chemical use and corresponding strawberry production", echo = FALSE, fig.dim = c(8,3)}
 violin
 ```
   
@@ -143,7 +143,8 @@ shinyApp(ui_2, server_2)
 
 ## Conclusion
 - Strawberry produced by acre by application has decreased over time.  
--  
+- California used to the be the top producer
+- Florida is overtaking California
 
 ## Extra EDA
 In our data exploration, we created many other plots:    
