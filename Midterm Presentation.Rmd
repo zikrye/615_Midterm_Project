@@ -43,7 +43,7 @@ source("data_and_eda.R")
 chem_year_valueq
 ```
   
-For both fungicide and insecticide, the use generally goes down every year, which we can see from the increasing 1st quartile (pink) and decreasing 4th quartile (purple).    
+For both fungicide and insecticide, the value generally goes down every year, which we can see from the increasing 1st quartile (pink) and decreasing 4th quartile (purple).    
 Let's visualize the difference between fungicide and insecticide.    
   
 
