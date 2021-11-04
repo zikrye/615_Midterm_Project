@@ -3,13 +3,16 @@ title: "Midterm project"
 author: 'Group 10: Kayla Choi, Kosuke Sasaki, Clare Zike Tan, Franky Yifan Zhang'
 date: "2021/11/03"
 output:
-  pdf_document: default
+  pdf_document:
+    includes:
+      in_header: style.sty
   html_document: default
+  word_document: default
 always_allow_html: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.pos = 'h')
 Sys.setenv("LANGUAGE" = "EN")
 Sys.setlocale("LC_ALL", "C")
 library(dplyr)
@@ -100,22 +103,20 @@ toxic2
   ```{r, echo = FALSE, warning=FALSE, message=FALSE}
 toxic3
 ```
-  These graphs show the distribution of the amount of strawberry production per acre per application by toxicity type in California. Based on the previous two sets of graphs, there seems to be some correlation between high bee toxic chemicals, known carcinogen, and some human toxic chemicals and the amount of strawberry production as well as California and the amount of strawberry production. So we look at the distribution of the amount of strawberry production by toxicity type in California. We also see some correlation between high bee toxic chemicals, known carcinogen, and some human toxic chemicals and the amount of strawberry production even within California, which suggests there seems to be some correlation between the chemical types and the amount of strawberry production when adjusted for states.
+  These graphs show the distribution of the amount of strawberry production per acre per application by toxicity type in California. Based on the previous two sets of graphs, there seems to be some correlation between high bee toxic chemicals, known carcinogen, and some human toxic chemicals and the amount of strawberry production as well as California and the amount of strawberry production. So we look at the distribution of the amount of strawberry production by toxicity type in California.
 
 
+## fig.8 Map of the strawberry production in 2000 
 
 ![map of the strawberry production in 2000](Map.png)
 
-
-
-
-
-
+California shows the most strawberry amount per acre per application among the states.
 
 
 
 ## 4. Conclusion
-- Strawberry produced by acre by application has decreased over time. 
-- California used to be the top producer
-- Florida is overtaking California
-- High toxic chemical for bee seemed to be correlated with larger strawberry production. 
+  We saw a mostly downward trend in the strawberries/acre/application over time, but California has not decreased their insecticide application. This makes sense because in the 2010s, the lygus bug, which is a major insect pest of strawberries, started becoming a bigger problem in Southern California due to warmer and drier climates.^1^  
+  We also saw some correlation between high bee toxic chemicals, known carcinogen, and some human toxic chemicals and the amount of strawberry production even within California, which suggests there seems to be some correlation between the chemical types and the amount of strawberry production when adjusted for states.  
+  
+# Reference {-}
+1. [Summary of Pesticide Use Report Data 2015](http://www.pesticidereform.org/wp-content/uploads/2021/01/ex_sum_15.pdf)
