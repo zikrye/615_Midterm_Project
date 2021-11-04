@@ -6,7 +6,6 @@ output:
   pdf_document: default
   html_document: default
 always_allow_html: true
-
 ---
 
 ```{r setup, include=FALSE}
@@ -39,95 +38,73 @@ For the pesticide data, we adopted the provided data.
 Finally, we combined these two data sets, deleted rows with no information, and selected the variables needed for EDA.
 
 ### ii) Exploratory Data Analysis
-#### - EDA by chemical type 
-<br>
-First we analyzed the data set making bar chart, violin and box plot, and density graph by chemical type to see if there is any difference in the amount of strawberry production between the two chemical types.
+*EDA by chemical type*
+  
+  First we analyzed the data set making bar chart, violin and box plot, and density graph by chemical type to see if there is any difference in the amount of strawberry production between the two chemical types.
 
-#### - EDA by year and state 
-<br>
-We also analyzed the data in terms of the amount of strawberry production by year and state where we make use of shiny application which allows us to explore strawberry production trends in each state and year more easily. 
+*EDA by year and state* 
+  
+  We also analyzed the data in terms of the amount of strawberry production by year and state where we make use of shiny application which allows us to explore strawberry production trends in each state and year more easily. 
 
-#### - EDA by toxicity level  
-<br>
-Finally we analyzed the data in terms of the amount of strawberry production by toxicity level.
+*EDA by toxicity level*  
+  
+  Finally we analyzed the data in terms of the amount of strawberry production by toxicity level.
 
 ## 3. Results
 
-```{r}
-#added two functions to the following 2 ggplot functions
-#scale_x_discrete to only display every 4 years
-#theme(axis.text.x to make it diagonal)
-ggplot(df) + geom_bar(aes(x = Year, fill = Value_q), alpha = .8, position = "fill") + facet_grid(~ chemical.type) +  scale_x_discrete(breaks=seq(1990, 2019, 4)) + theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1))
 
-ggplot(df) + geom_bar(aes(x = State, fill = Value_q), alpha = .8, position = "fill") + facet_grid(~ chemical.type) + theme(legend.position  = "bottom") + theme(axis.text.x = element_text(angle = 45, hjust=1))
+### EDA by chemical type
 
-ggplot() + geom_density(data = df, aes(x = Value, fill = chemical.type, color = chemical.type), alpha = .5) + geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8)
-
-ggplot(df, aes( x = chemical.type, y = Value, fill = chemical.type)) + geom_violin(alpha = .5) + geom_boxplot(width=0.1) + stat_summary(fun=mean, geom="point", shape=1, size=2) + theme(legend.position  = "none")
-
-#interactive plot 
-gg_point <- ggplot(df) + geom_point_interactive(aes(x = Year, y = Value, color = State, tooltip = chemical, data_id = chemical)) 
-
-plot <- girafe(ggobj = gg_point)
-
-plot
-
-##############################################################
-#Add plots by toxicity category, by state, and in California
-##############################################################
-ggplot(df) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
-  geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
-  coord_cartesian(ylim = c(0, 30))+
-  facet_wrap(~humanORbee) +
-  labs(title = "Bee Toxic Chemical use")
-
-
-ggplot(df) + 
-  geom_freqpoly(aes(x = Value, color = State), alpha= 100) + 
-  geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
-  scale_color_manual(values = c("CALIFORNIA"="red"))+
-  coord_cartesian(ylim = c(0, 30))+
-  facet_wrap(~humanORbee) +
-  labs(title = "Bee Toxic Chemical use in California compared to other states")
-
-
-#Plot for only CALIFORNIA
-ggplot(df_Cal) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
-  geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
-  coord_cartesian( ylim = c(0, 30))+
-  facet_wrap(~humanORbee) +
-  labs(title = "Bee Toxic Chemical use by Toxicity level in California")
-
+```{r, warning=FALSE, message=FALSE}
+chem_year_valueq
 ```
-This graph shows the amount of strawberry production by toxicity type. For the chemical toxic for bee, it seems that we have correlation between high toxic chemical and the amount of strawberry production. For the 
-
-## interactive plot of mean value
-```{r}
-
-
-library(ggplot2)
-library(dplyr)
-library(plotly)
+<br>
+For both fungicide and insecticide, the value generally goes down every year, which we can see from the increasing 1st quartile (pink) and decreasing 4th quartile (purple).    
+  
+<br><br><br><br><br><br><br><br>
 
 
-fungi <- df  %>% group_by(State, chemical.type, Year)%>% summarise(Value = mean(Value)) %>% filter(chemical.type == "CHEMICAL, FUNGICIDE")
-
-p_f <- ggplot(fungi, aes(x = Year, y = Value, group = State))+
-  geom_point(aes(color = State))+
-  geom_line(aes(color = State))
-ggplotly(p_f)
-
-
-insec <- df  %>% group_by(State, chemical.type, Year)%>% summarise(Value = mean(Value)) %>% filter(chemical.type == "CHEMICAL, INSECTICIDE")
-
-p_i <- ggplot(insec, aes(x = Year, y = Value, group = State))+
-  geom_point(aes(color = State))+
-  geom_line(aes(color = State))
-ggplotly(p_i)
-
-
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+violin
 ```
+  
+Insecticide has higher mean and median value, but fungicide has a larger spread. Fungicide corresponds with lower strawberry production but has larger spread.Insecticide has higher values.
 
+<br><br><br><br><br><br><br><br>
+
+### EDA by year and state
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+p_f
+```
+  
+The trend of strawberry production per acre per application decreases over time, which corresponds to the fig.1 result.
+
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+p_i
+```
+  
+This plot also shows the down trend, but the value for California levels off after 2010.
+
+### EDA by toxicity level
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+toxic1
+```
+These graphs show the distribution of the amount of strawberry production per acre per application by toxicity type. For the chemical toxic to bee, there seems to be a correlation between high toxic chemical and the amount of strawberry production. For the other chemicals toxic to human, know carcinogen, hormone disruptor and neurotoxins seem to have high strawberry production per acre per application.  
+
+```{r, echo = FALSE, warning=FALSE, message=FALSE}
+toxic2
+```
+  These graphs show the distribution of the amount of strawberry production per acre per application by state, focusing on California. For the both chemical types, California seems to have high amount of strawberry production per acre per application, especially around the value of 2 (lb/ acre/ application).  
+  
+  ```{r, echo = FALSE, warning=FALSE, message=FALSE}
+toxic3
+```
+  These graphs show the distribution of the amount of strawberry production per acre per application by toxicity type in California. Based on the previous two sets of graphs, there seems to be some correlation between high bee toxic chemicals, known carcinogen, and some human toxic chemicals and the amount of strawberry production as well as California and the amount of strawberry production. So we look at the distribution of the amount of strawberry production by toxicity type in California. We also see some correlation between high bee toxic chemicals, known carcinogen, and some human toxic chemicals and the amount of strawberry production even within California, which suggests there seems to be some correlation between the chemical types and the amount of strawberry production when adjusted for states.
+
+
+
+![map of the strawberry production in 2000](Map.png)
 
 
 

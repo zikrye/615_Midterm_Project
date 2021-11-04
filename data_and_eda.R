@@ -140,13 +140,17 @@ df_Cal <- filter(df, State == "CALIFORNIA")
 #added two functions to the following 2 ggplot functions
 #scale_x_discrete to only display every 4 years
 #theme(axis.text.x to make it diagonal)
-chem_year_valueq <- ggplot(df) + geom_bar(aes(x = Year, fill = Value_q), alpha = .8, position = "fill") + facet_grid(~ chemical.type) +  scale_x_discrete(breaks=seq(1990, 2019, 4)) + theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) + ylab("Relative Frequency") + scale_fill_discrete(name = "Value Quartile")
+chem_year_valueq <- ggplot(df) + geom_bar(aes(x = Year, fill = Value_q), alpha = .8, position = "fill") + facet_grid(~ chemical.type) +  scale_x_discrete(breaks=seq(1990, 2019, 4)) + theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1)) + ylab("Relative Frequency") + 
+  scale_fill_discrete(name = "Value Quartile")+
+  labs(title = "fig.1 Relative Frequency of Chemical use per year")
 
 chem_state_valueq <- ggplot(df) + geom_bar(aes(x = State, fill = Value_q), alpha = .8, position = "fill") + facet_grid(~ chemical.type) + theme(legend.position  = "bottom") + theme(axis.text.x = element_text(angle = 45, hjust=1)) + ylab("Relative Frequency") + scale_fill_discrete(name = "Value Quartile") 
 
+
 density <- ggplot() + geom_density(data = df, aes(x = Value, fill = chemical.type, color = chemical.type), alpha = .5) + geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8) + scale_fill_discrete(name = "Chemical Type") + scale_color_discrete(name = "Chemical Type")
 
-violin <- ggplot(df, aes( x = chemical.type, y = Value, fill = chemical.type)) + geom_violin(alpha = .5) + geom_boxplot(width=0.1) + stat_summary(fun=mean, geom="point", shape=1, size=2) + theme(legend.position  = "none") + xlab("Chemical type")
+violin <- ggplot(df, aes( x = chemical.type, y = Value, fill = chemical.type)) + geom_violin(alpha = .5) + geom_boxplot(width=0.1) + stat_summary(fun=mean, geom="point", shape=1, size=2) + theme(legend.position  = "none") + xlab("Chemical type") +
+  labs(title = "fig.2 Distribution of Chemical use and corresponding strawberry production")
 
 #interactive plot 
 gg_point <- ggplot(df) + geom_point_interactive(aes(x = Year, y = Value, color = State, tooltip = chemical, data_id = chemical))  +  scale_x_discrete(breaks=seq(1990, 2019, 4))
@@ -157,25 +161,29 @@ plot <- girafe(ggobj = gg_point)
 
 
 #Add plots by toxicity category, by state, and in California
-# ggplot(filter(df, humanORbee=="Bee")) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
-#   geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
-#   coord_cartesian(ylim = c(0, 30))+
-#   labs(title = "Bee Toxic Chemical use")
+toxic1 <- ggplot(df) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
+  geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8) + 
+  coord_cartesian(ylim = c(0, 30))+
+  facet_wrap(~Toxicity)+
+  labs(title = "fig.5 Chemical use by Toxicity level")
 
 
 # ggplot(filter(df, humanORbee=="Bee")) + 
-#   geom_freqpoly(aes(x = Value, color = State), alpha= 100) + 
-#   geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
-#   scale_color_manual(values = c("CALIFORNIA"="red"))+
-#   coord_cartesian(ylim = c(0, 30))+
-#   labs(title = "Bee Toxic Chemical use in California compared to other states")
+toxic2 <- ggplot(df) + 
+  geom_freqpoly(aes(x = Value, color = State), alpha= 100) + 
+  geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8) + 
+  scale_color_manual(values = c("CALIFORNIA"="red"))+
+  coord_cartesian(ylim = c(0, 30))+
+  facet_wrap(~humanORbee) +
+  labs(title = "fig.6 Chemical use in California compared to other states")
 
 
 #Plot for only CALIFORNIA
-# ggplot(filter(df_Cal, humanORbee=="Bee")) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
-#   geom_vline(data = mubee, aes(xintercept = mean), linetype = "dashed", lwd = .8) + 
-#   coord_cartesian( ylim = c(0, 30))+
-#   labs(title = "Bee Toxic Chemical use by Toxicity level in California")
+toxic3 <- ggplot(df_Cal) + geom_freqpoly(aes(x = Value, color = Level), alpha= 100) + 
+  geom_vline(data = mu, aes(xintercept = mean, color = chemical.type), linetype = "dashed", lwd = .8) + 
+  coord_cartesian( ylim = c(0, 30))+
+  facet_wrap(~Toxicity)+
+  labs(title = "fig.7 Chemical use by Toxicity level in California")
 
 #interactive plot of the means 
 fungi <- df  %>% group_by(State, chemical.type, Year)%>% summarise(Value = mean(Value)) %>% filter(chemical.type == "CHEMICAL, FUNGICIDE")
@@ -183,8 +191,9 @@ fungi <- df  %>% group_by(State, chemical.type, Year)%>% summarise(Value = mean(
 p_f <- ggplot(fungi, aes(x = Year, y = Value, group = State))+
   geom_point(aes(color = State))+
   geom_line(aes(color = State)) + 
-  scale_x_discrete(breaks=seq(1990, 2019, 4))
-  
+  scale_x_discrete(breaks=seq(1990, 2019, 4))+
+  labs(title = "fig.3 Strawberry production per acre per fungicide application over time by state")
+
 #ggplotly(p_f)
 
 
@@ -193,7 +202,8 @@ insec <- df  %>% group_by(State, chemical.type, Year)%>% summarise(Value = mean(
 p_i <- ggplot(insec, aes(x = Year, y = Value, group = State))+
   geom_point(aes(color = State))+
   geom_line(aes(color = State)) +
-  scale_x_discrete(breaks=seq(1990, 2019, 4))
+  scale_x_discrete(breaks=seq(1990, 2019, 4)) +
+  labs(title = "fig.4 Strawberry production per acre per fungicide application over time by state")
 #ggplotly(p_i)
 
 
